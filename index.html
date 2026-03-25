@@ -283,6 +283,20 @@ main.visible { opacity: 1; }
 
 .hero-desc .hi { color:var(--blue-bright); display:block; margin-bottom:6px; font-size:14px; }
 
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.from-left  { transform: translateX(-40px); }
+.reveal.from-right { transform: translateX(40px); }
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
 /* ── PANELS ── */
 .panels {
   display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;
@@ -292,13 +306,7 @@ main.visible { opacity: 1; }
   background:var(--panel-bg); border:1px solid var(--border); padding:22px;
   position:relative;
   clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  animation:fadeSlide 0.5s ease both;
 }
-
-.panel:nth-child(1){animation-delay:0.55s}
-.panel:nth-child(2){animation-delay:0.65s}
-.panel:nth-child(3){animation-delay:0.75s}
-.panel:nth-child(4){animation-delay:0.85s}
 
 .panel::before {
   content:''; position:absolute; top:0; right:14px;
@@ -349,7 +357,7 @@ main.visible { opacity: 1; }
   height:100%; border-radius:2px;
   background:linear-gradient(90deg,var(--blue-dim),var(--blue));
   box-shadow:0 0 8px rgba(79,195,247,0.4);
-  width:0; animation:barGrow 1.2s cubic-bezier(0.16,1,0.3,1) 1.2s both;
+  width:0; /* animated by JS on scroll reveal */
 }
 
 .bar-fill.gold {
@@ -364,7 +372,6 @@ main.visible { opacity: 1; }
   background:var(--panel-bg); border:1px solid var(--border); padding:22px;
   position:relative; margin-bottom:16px;
   clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  animation:fadeSlide 0.5s ease 0.9s both;
 }
 
 .missions-panel::before {
@@ -426,7 +433,6 @@ main.visible { opacity: 1; }
   background:var(--panel-bg); border:1px solid var(--border); padding:22px;
   position:relative;
   clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  animation:fadeSlide 0.5s ease 1s both;
 }
 
 .links-panel::before {
@@ -463,7 +469,6 @@ main.visible { opacity: 1; }
   margin-top:32px; padding-top:16px;
   border-top:1px solid rgba(79,195,247,0.08);
   font-size:9px; letter-spacing:0.14em; color:rgba(79,195,247,0.2);
-  animation:fadeSlide 0.5s ease 1.2s both;
 }
 
 /* ── AUDIO BTN ── */
@@ -478,6 +483,79 @@ main.visible { opacity: 1; }
 }
 
 #audio-btn:hover { border-color:rgba(79,195,247,0.4); background:rgba(79,195,247,0.06); }
+
+/* ── SCAN LINE ── */
+#hud-scan {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+#hud-scan::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(79,195,247,0.0) 10%,
+    rgba(79,195,247,0.18) 40%,
+    rgba(79,195,247,0.35) 50%,
+    rgba(79,195,247,0.18) 60%,
+    rgba(79,195,247,0.0) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 18px rgba(79,195,247,0.25), 0 0 4px rgba(79,195,247,0.5);
+  animation: scanMove 7s linear infinite;
+}
+@keyframes scanMove {
+  0%   { top: -2px; opacity: 0; }
+  3%   { opacity: 1; }
+  97%  { opacity: 1; }
+  100% { top: 100vh; opacity: 0; }
+}
+
+/* ── JARVIS NOTIFICATIONS ── */
+#jarvis-notifs {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  pointer-events: none;
+  width: 320px;
+}
+.jarvis-notif {
+  background: rgba(4,12,20,0.92);
+  border: 1px solid rgba(79,195,247,0.2);
+  border-left: 2px solid var(--blue);
+  padding: 9px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  max-width: 100%;
+  width: 100%;
+}
+.jarvis-notif.warn { border-left-color: var(--gold); }
+.jarvis-notif.show { opacity: 1; transform: translateX(0); }
+.jarvis-notif.hide { opacity: 0; transform: translateX(20px); }
+.jarvis-notif-header {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  margin-bottom: 3px;
+}
+.t-ok   { color: #00e676; }
+.t-warn { color: var(--gold); }
+.t-info { color: var(--blue); }
 
 /* ── ANIMATIONS ── */
 @keyframes fadeSlide {
@@ -537,6 +615,8 @@ main.visible { opacity: 1; }
 <!-- MAIN -->
 <canvas id="bg-canvas"></canvas>
 <div class="scanlines"></div>
+<div id="hud-scan"></div>
+<div id="jarvis-notifs"></div>
 
 <main id="main-content">
 
@@ -571,7 +651,7 @@ main.visible { opacity: 1; }
   </section>
 
   <div class="panels">
-    <div class="panel">
+    <div class="panel reveal from-left">
       <div class="panel-label">АКТИВНЫЕ ПРОТОКОЛЫ</div>
       <ul>
         <li>Team Fortress 2</li>
@@ -580,7 +660,7 @@ main.visible { opacity: 1; }
         <li>Counter-Strike 2</li>
       </ul>
     </div>
-    <div class="panel">
+    <div class="panel reveal from-right">
       <div class="panel-label">СФЕРЫ ИНТЕРЕСОВ</div>
       <ul>
         <li>Кибербезопасность / Privacy</li>
@@ -589,7 +669,7 @@ main.visible { opacity: 1; }
         <li>Кино: нуар, боевики</li>
       </ul>
     </div>
-    <div class="panel">
+    <div class="panel reveal from-left">
       <div class="panel-label">СТАТИСТИКА СИСТЕМЫ</div>
       <div class="stat-grid">
         <div class="stat-item">
@@ -610,7 +690,7 @@ main.visible { opacity: 1; }
         </div>
       </div>
     </div>
-    <div class="panel">
+    <div class="panel reveal from-right">
       <div class="panel-label">ИНДЕКС НАВЫКОВ</div>
       <div class="bar-list">
         <div class="bar-item">
@@ -634,7 +714,7 @@ main.visible { opacity: 1; }
   </div>
 
   <!-- MISSIONS -->
-  <div class="missions-panel">
+  <div class="missions-panel reveal">
     <div class="panel-label">ЖУРНАЛ МИССИЙ</div>
     <div class="mission-list">
 
@@ -678,7 +758,7 @@ main.visible { opacity: 1; }
   </div>
 
   <!-- LINKS -->
-  <div class="links-panel">
+  <div class="links-panel reveal">
     <div class="panel-label">ТОЧКИ СВЯЗИ</div>
     <div class="link-rows">
       <a class="link-row" href="https://t.me/byxarTf2">
@@ -694,7 +774,7 @@ main.visible { opacity: 1; }
     </div>
   </div>
 
-  <div class="footer-bar">
+  <div class="footer-bar reveal">
     <span>B.U.K.H.I.C.H // BEHAVIORAL UTILITY KERNEL · HEURISTIC INTELLIGENCE COMMAND HUB</span>
     <span>CLEARANCE: ПУБЛИЧНЫЙ</span>
   </div>
@@ -705,6 +785,78 @@ main.visible { opacity: 1; }
 <button id="audio-btn" onclick="toggleAudio()">◈ ХУМ: ВЫКЛ</button>
 
 <script>
+// ── SCROLL REVEAL ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      // Stagger delay for siblings inside .panels grid
+      const parent = entry.target.parentElement;
+      let delay = 0;
+      if (parent.classList.contains('panels')) {
+        const siblings = [...parent.querySelectorAll('.reveal')];
+        delay = siblings.indexOf(entry.target) * 80;
+      }
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+        // Trigger bar animations inside if any
+        entry.target.querySelectorAll('.bar-fill').forEach(bar => {
+          bar.style.animation = 'none';
+          bar.offsetWidth; // reflow
+          bar.style.animation = 'barGrow 1.2s cubic-bezier(0.16,1,0.3,1) 0.1s both';
+        });
+      }, delay);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+// ── JARVIS NOTIFICATIONS ──
+const jarvisPool = [
+  { type:'ok',   label:'SYS.MONITOR',  text:'Все системы в норме. Угроз не обнаружено.' },
+  { type:'info', label:'NET.SCAN',     text:'Входящий трафик проанализирован. Подозрительных пакетов: 0.' },
+  { type:'warn', label:'PARANOIA.LVL', text:'Уровень паранои повышен. Рекомендуется VPN.' },
+  { type:'ok',   label:'UPLINK',       text:'Соединение с оператором стабильно.' },
+  { type:'info', label:'GAME.FEED',    text:'TF2: сервер 2fort доступен. Пинг 34мс.' },
+  { type:'warn', label:'OPSEC.ALERT',  text:'Обнаружена нешифрованная сессия. Переключить на Signal.' },
+  { type:'ok',   label:'PROC.STATUS',  text:'Фоновые процессы: Ollama активен. Qwen2.5 в режиме ожидания.' },
+  { type:'info', label:'WOT.INTEL',    text:'Орбита: прогресс BZT-70 обновлён. До Object 279: скоро.' },
+  { type:'warn', label:'RKN.DETECT',   text:'Обнаружена блокировка DNS. Переключение на Amnezia.' },
+  { type:'ok',   label:'TWITCH.MOD',   text:'Канал Комраделоль: активность в норме. Чат чист.' },
+  { type:'info', label:'DRG.COMMS',    text:'Deep Rock Galactic: миссия класса Hazard 3. Готовность 100%.' },
+  { type:'ok',   label:'B.U.K.H.I.C.H','text':'Все протоколы загружены. Оператор идентифицирован.' },
+  { type:'warn', label:'THERMAL',      text:'RTX 3050: температура в норме. Дросселинг не обнаружен.' },
+  { type:'info', label:'STICKER.MKT',  text:'CS2: капсула +3.2% за 7 дней. Держать позицию.' },
+];
+
+const notifsEl = document.getElementById('jarvis-notifs');
+let notifIndex = 0;
+
+function showNotif() {
+  const msg = jarvisPool[notifIndex % jarvisPool.length];
+  notifIndex++;
+
+  const el = document.createElement('div');
+  el.className = 'jarvis-notif' + (msg.type === 'warn' ? ' warn' : '');
+  el.innerHTML = `<div class="jarvis-notif-header"><span class="t-${msg.type}">[${msg.type.toUpperCase()}]</span> ${msg.label}</div><div>${msg.text}</div>`;
+  notifsEl.appendChild(el);
+
+  // Влетает
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+
+  // Улетает через 4.5с
+  setTimeout(() => {
+    el.classList.remove('show');
+    el.classList.add('hide');
+    setTimeout(() => el.remove(), 400);
+  }, 4500);
+}
+
+// Первое сообщение через 4с после boot, затем каждые 8–14с
+setTimeout(() => {
+  showNotif();
+  setInterval(showNotif, 8000 + Math.random() * 6000);
+}, 4000);
+
 // ── CURSOR ──
 const cursor    = document.getElementById('cursor');
 const cursorDot = document.getElementById('cursor-dot');
@@ -760,6 +912,12 @@ setTimeout(() => {
   bootEl.classList.add('done');
   mainEl.classList.add('visible');
   setTimeout(() => { bootEl.style.display = 'none'; }, 700);
+
+  // Запускаем Observer только после boot — иначе все элементы
+  // уже "видимы" в DOM и триггерятся мгновенно без анимации
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  }, 800);
 }, 2400);
 
 // ── UPTIME ──

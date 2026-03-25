@@ -557,11 +557,376 @@ main.visible { opacity: 1; }
 .t-warn { color: var(--gold); }
 .t-info { color: var(--blue); }
 
-/* ── ANIMATIONS ── */
+/* ── TERMINAL ── */
+#terminal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+#terminal-wrap.open {
+  opacity: 1;
+  pointer-events: all;
+}
+#terminal {
+  width: min(700px, 92vw);
+  height: min(420px, 80vh);
+  background: rgba(2,6,12,0.97);
+  border: 1px solid rgba(79,195,247,0.25);
+  border-top: 2px solid var(--blue);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Share Tech Mono', monospace;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  box-shadow: 0 0 60px rgba(79,195,247,0.1);
+}
+#terminal-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 14px;
+  border-bottom: 1px solid rgba(79,195,247,0.1);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  flex-shrink: 0;
+}
+#terminal-close {
+  color: rgba(79,195,247,0.3);
+  cursor: pointer !important;
+  font-size: 12px;
+  transition: color 0.15s;
+  background: none;
+  border: none;
+  font-family: inherit;
+  letter-spacing: 0;
+}
+#terminal-close:hover { color: #ef5350; }
+#terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--text);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(79,195,247,0.15) transparent;
+}
+#terminal-output::-webkit-scrollbar { width: 4px; }
+#terminal-output::-webkit-scrollbar-thumb { background: rgba(79,195,247,0.15); }
+.t-line { display: block; }
+.t-line.cmd  { color: var(--blue-bright); }
+.t-line.ok   { color: #00e676; }
+.t-line.warn { color: var(--gold); }
+.t-line.err  { color: #ef5350; }
+.t-line.dim  { color: rgba(79,195,247,0.3); }
+.t-line.hack { color: #ef5350; animation: hackFlicker 0.08s infinite; }
+@keyframes hackFlicker { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.t-line b { color: var(--blue-bright); }
+#terminal-input-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-top: 1px solid rgba(79,195,247,0.08);
+  gap: 8px;
+  flex-shrink: 0;
+}
+#terminal-prompt {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+#terminal-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--blue-bright);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  caret-color: var(--blue);
+  cursor: text !important;
+}
+#terminal-hint {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: rgba(79,195,247,0.18);
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  animation: fadeSlide 0.5s ease 3.5s both;
+}
+
+#mobile-term-btn {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 100;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--blue);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  padding: 8px 14px;
+  clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+  transition: border-color 0.2s, background 0.2s;
+  opacity: 0;
+  animation: fadeSlide 0.5s ease 3.2s both;
+}
+#mobile-term-btn:hover { border-color: rgba(79,195,247,0.4); background: rgba(79,195,247,0.06); }
+
+@media (max-width: 768px), (pointer: coarse) {
+  #mobile-term-btn { display: block; }
+  #terminal-hint   { display: none; }
+}
+
+/* ── РЕЖИМЫ ── */
+body.mode-stealth {
+  --blue: #2a7a9e;
+  --blue-bright: #4aa8cc;
+  --blue-dim: #0e2e3d;
+  --gold: #7a6130;
+  --gold-bright: #9a7d40;
+  --gold-dim: #3d3018;
+  --text: #4a7a8e;
+  --text-bright: #6a9aae;
+  --border: rgba(42,122,158,0.1);
+  --panel-bg: rgba(2,6,10,0.97);
+}
+body.mode-stealth .scanlines {
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px
+  );
+}
+body.mode-stealth #hud-scan { display: none; }
+body.mode-stealth .status-dot { background: #1a7a3a; box-shadow: 0 0 4px #1a7a3a; }
+
+body.mode-overdrive {
+  --blue: #00ffff;
+  --blue-bright: #aaffff;
+  --blue-dim: #005566;
+  --gold: #ffe000;
+  --gold-bright: #fff066;
+  --gold-dim: #997a00;
+  --text: #b0eeff;
+  --text-bright: #e0faff;
+  --border: rgba(0,255,255,0.4);
+  --panel-bg: rgba(0,8,16,0.96);
+}
+body.mode-overdrive #hud-scan::after {
+  height: 3px;
+  animation: scanMove 2.8s linear infinite;
+  box-shadow: 0 0 40px rgba(0,255,255,0.7), 0 0 10px rgba(0,255,255,1);
+}
+body.mode-overdrive .reactor-inner {
+  animation: glow 0.7s ease-in-out infinite;
+  box-shadow: 0 0 40px rgba(0,255,255,0.9), 0 0 100px rgba(0,255,255,0.3), inset 0 0 20px rgba(0,255,255,0.4) !important;
+}
+body.mode-overdrive .reactor-core {
+  box-shadow: 0 0 60px rgba(0,255,255,0.25), inset 0 0 30px rgba(0,255,255,0.12);
+}
+body.mode-overdrive main::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: radial-gradient(ellipse at 50% 40%, rgba(0,255,255,0.07) 0%, transparent 65%);
+  animation: overdriveVig 1.5s ease-in-out infinite alternate;
+}
+@keyframes overdriveVig {
+  from { opacity: 0.4; }
+  to   { opacity: 1; }
+}
+body.mode-overdrive .panel,
+body.mode-overdrive .missions-panel,
+body.mode-overdrive .links-panel {
+  box-shadow: 0 0 28px rgba(0,255,255,0.1), inset 0 0 24px rgba(0,255,255,0.04);
+  border-color: rgba(0,255,255,0.3);
+}
+body.mode-overdrive .panel::before,
+body.mode-overdrive .missions-panel::before,
+body.mode-overdrive .links-panel::before {
+  border-color: transparent rgba(0,255,255,0.5) transparent transparent;
+}
+
+/* Глитч на hero-name */
+body.mode-overdrive .hero-name {
+  text-shadow:
+    0 0 20px rgba(0,255,255,0.9),
+    0 0 60px rgba(0,255,255,0.4),
+    0 0 120px rgba(0,255,255,0.15);
+  animation: glitchName 3s ease-in-out infinite;
+  position: relative;
+}
+@keyframes glitchName {
+  0%,89%,100% { 
+    transform: none; 
+    text-shadow: 0 0 20px rgba(0,255,255,0.9), 0 0 60px rgba(0,255,255,0.4);
+  }
+  90% { transform: translate(-2px, 0); text-shadow: 3px 0 #ff0066, -3px 0 #00ffff; }
+  91% { transform: translate(2px, 0);  text-shadow: -3px 0 #ff0066, 3px 0 #00ffff; }
+  92% { transform: translate(0, -1px); text-shadow: 3px 0 #ff0066, -3px 0 #00ffff; }
+  93% { transform: none; text-shadow: 0 0 20px rgba(0,255,255,0.9), 0 0 60px rgba(0,255,255,0.4); }
+  96% { transform: translate(-1px, 1px); text-shadow: 2px 0 #ffee00, -2px 0 #00ffff; }
+  97% { transform: none; }
+}
+
+/* Глитч на panel-label */
+body.mode-overdrive .panel-label {
+  animation: glitchLabel 5s ease-in-out infinite;
+  color: var(--gold) !important;
+  text-shadow: 0 0 8px rgba(255,224,0,0.6);
+}
+@keyframes glitchLabel {
+  0%,94%,100% { transform: none; opacity: 1; }
+  95% { transform: translateX(-1px); opacity: 0.8; color: #00ffff; }
+  96% { transform: translateX(2px); }
+  97% { transform: none; opacity: 1; }
+}
+
+/* Глитч на hero-sub */
+body.mode-overdrive .hero-sub {
+  animation: glitchSub 7s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(255,224,0,0.7);
+}
+@keyframes glitchSub {
+  0%,91%,100% { transform: none; opacity: 1; }
+  92% { transform: translate(3px, 0); opacity: 0.6; filter: hue-rotate(90deg); }
+  93% { transform: translate(-2px, 0); }
+  94% { transform: none; opacity: 1; filter: none; }
+}
+
+/* Статус-дот в overdrive мигает быстро */
+body.mode-overdrive .status-dot {
+  animation: pulse 0.6s ease-in-out infinite;
+  box-shadow: 0 0 14px #00e676;
+}
+
+/* Border топбара светится */
+body.mode-overdrive .topbar {
+  border-bottom: 1px solid rgba(0,255,255,0.15);
+  text-shadow: 0 0 8px rgba(0,255,255,0.5);
+}
+
+/* Хром на скроллбаре канваса и link-arrow */
+body.mode-overdrive .link-row:hover .link-arrow {
+  text-shadow: 0 0 8px var(--blue);
+}
+
+/* Периодический общий глитч-флэш */
+body.mode-overdrive #bg-canvas {
+  animation: canvasFlash 6s ease-in-out infinite;
+}
+@keyframes canvasFlash {
+  0%,93%,100% { opacity: 1; }
+  94% { opacity: 0.6; filter: hue-rotate(20deg) brightness(1.4); }
+  95% { opacity: 1; filter: none; }
+  97% { opacity: 0.8; filter: hue-rotate(-20deg); }
+  98% { opacity: 1; filter: none; }
+}
+
+/* ── MODE SWITCHER ── */
+#mode-switcher {
+  position: fixed;
+  bottom: 64px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  opacity: 0;
+  animation: fadeSlide 0.5s ease 2.2s both;
+}
+.mode-btn {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  padding: 5px 10px;
+  clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  text-align: left;
+  white-space: nowrap;
+}
+.mode-btn:hover { border-color: rgba(79,195,247,0.35); color: var(--blue-bright); }
+.mode-btn.active { border-color: var(--blue); color: var(--blue); background: rgba(79,195,247,0.06); }
+body.mode-stealth .mode-btn.active-stealth,
+body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); color: var(--blue); background: rgba(79,195,247,0.06); }
+.mode-btn.active-normal { }
+
+@media (max-width: 640px) {
+  #mode-switcher { bottom: 70px; right: 12px; }
+  #audio-btn { bottom: 24px; right: 12px; }
+}
+
 @keyframes fadeSlide {
   from { opacity:0; transform:translateY(14px); }
   to   { opacity:1; transform:none; }
 }
+
+/* ── CURSOR TRAIL ── */
+.cursor-trail {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+}
+
+/* ── REACTOR POPUP ── */
+.reactor-wrap { position: relative; cursor: pointer !important; }
+
+#reactor-popup {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(2,6,12,0.97);
+  border: 1px solid rgba(79,195,247,0.3);
+  border-top: 2px solid var(--blue);
+  padding: 12px 16px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-bright);
+  width: 220px;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 20;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+#reactor-popup.show { opacity: 1; pointer-events: all; }
+#reactor-popup .rp-label {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  margin-bottom: 6px;
+}
+
+/* TF2 hours */
+.stat-val.loading { font-size: 13px; opacity: 0.5; }
 
 /* ── RESPONSIVE ── */
 @media (max-width:640px) {
@@ -625,11 +990,14 @@ main.visible { opacity: 1; }
       <div class="status-dot"></div>
       <span>B.U.K.H.I.C.H // АКТИВЕН</span>
     </div>
-    <div class="topbar-right">SYS.UPTIME: <span id="uptime">00:00:00</span></div>
+    <div class="topbar-right">
+      <span id="cursor-coords" style="margin-right:14px;opacity:0.4">X:0000 Y:0000</span>
+      SYS.UPTIME: <span id="uptime">00:00:00</span>
+    </div>
   </div>
 
   <section class="hero">
-    <div class="reactor-wrap">
+    <div class="reactor-wrap" onclick="toggleReactorPopup()">
       <div class="reactor">
         <div class="reactor-ring r1"></div>
         <div class="reactor-ring r2"></div>
@@ -637,6 +1005,10 @@ main.visible { opacity: 1; }
         <div class="reactor-core">
           <div class="reactor-inner"></div>
         </div>
+      </div>
+      <div id="reactor-popup">
+        <div class="rp-label">B.U.K.H.I.C.H // СТАТУС СИСТЕМЫ</div>
+        <div id="reactor-msg">Инициализация...</div>
       </div>
     </div>
     <div class="hero-text">
@@ -673,8 +1045,8 @@ main.visible { opacity: 1; }
       <div class="panel-label">СТАТИСТИКА СИСТЕМЫ</div>
       <div class="stat-grid">
         <div class="stat-item">
-          <div class="stat-val">4+</div>
-          <div class="stat-key">АКТИВНЫХ ИГР</div>
+          <div class="stat-val" id="tf2-hours">...</div>
+          <div class="stat-key">TF2 ЧАСОВ</div>
         </div>
         <div class="stat-item">
           <div class="stat-val">24/7</div>
@@ -782,7 +1154,30 @@ main.visible { opacity: 1; }
 </main>
 
 <!-- AUDIO TOGGLE -->
+<!-- TERMINAL -->
+<div id="terminal-wrap">
+  <div id="terminal">
+    <div id="terminal-titlebar">
+      <span>B.U.K.H.I.C.H // TERMINAL v2.1 // CLEARANCE: ОПЕРАТОР</span>
+      <button id="terminal-close" onclick="closeTerminal()">[ ESC ]</button>
+    </div>
+    <div id="terminal-output"></div>
+    <div id="terminal-input-row">
+      <span id="terminal-prompt">БУХИЧ@BUKHICH:~$</span>
+      <input id="terminal-input" type="text" autocomplete="off" spellcheck="false" placeholder="введи команду...">
+    </div>
+  </div>
+</div>
+<div id="terminal-hint">[ ~ ] ОТКРЫТЬ ТЕРМИНАЛ</div>
+<button id="mobile-term-btn" onclick="openTerminal()">⌨ ТЕРМИНАЛ</button>
+
 <button id="audio-btn" onclick="toggleAudio()">◈ ХУМ: ВЫКЛ</button>
+
+<div id="mode-switcher">
+  <button class="mode-btn active" id="btn-normal"    onclick="setMode('normal')">◈ NORMAL</button>
+  <button class="mode-btn"        id="btn-stealth"   onclick="setMode('stealth')">◈ STEALTH</button>
+  <button class="mode-btn"        id="btn-overdrive" onclick="setMode('overdrive')">◈ OVERDRIVE</button>
+</div>
 
 <script>
 // ── SCROLL REVEAL ──
@@ -857,16 +1252,125 @@ setTimeout(() => {
   setInterval(showNotif, 8000 + Math.random() * 6000);
 }, 4000);
 
-// ── CURSOR ──
-const cursor    = document.getElementById('cursor');
-const cursorDot = document.getElementById('cursor-dot');
+// ── РЕЖИМЫ ИНТЕРФЕЙСА ──
+const MODES = ['normal', 'stealth', 'overdrive'];
+let currentMode = 'normal';
+
+// ── CURSOR TRAIL ──
+const trailPool = [];
+const TRAIL_COUNT = 12;
+for (let i = 0; i < TRAIL_COUNT; i++) {
+  const el = document.createElement('div');
+  el.className = 'cursor-trail';
+  document.body.appendChild(el);
+  trailPool.push({ el, x: 0, y: 0, alpha: 0 });
+}
+
+let mouseX = 0, mouseY = 0;
+const trailPositions = [];
 
 document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
   cursor.style.left    = e.clientX + 'px';
   cursor.style.top     = e.clientY + 'px';
   cursorDot.style.left = e.clientX + 'px';
   cursorDot.style.top  = e.clientY + 'px';
+
+  // Координаты в топбаре
+  const cx = String(e.clientX).padStart(4, '0');
+  const cy = String(e.clientY).padStart(4, '0');
+  document.getElementById('cursor-coords').textContent = `X:${cx} Y:${cy}`;
+
+  // Трейл
+  if (currentMode !== 'stealth') {
+    trailPositions.unshift({ x: e.clientX, y: e.clientY });
+    if (trailPositions.length > TRAIL_COUNT) trailPositions.pop();
+  }
 });
+
+function updateTrail() {
+  const od = currentMode === 'overdrive';
+  const color = od ? '0,255,255' : '79,195,247';
+  trailPool.forEach((t, i) => {
+    const pos = trailPositions[i];
+    if (!pos || currentMode === 'stealth') { t.el.style.opacity = 0; return; }
+    const progress = 1 - i / TRAIL_COUNT;
+    const size = od ? (3 + progress * 8) : (2 + progress * 4);
+    const alpha = od ? progress * 0.7 : progress * 0.35;
+    t.el.style.cssText = `
+      left:${pos.x}px; top:${pos.y}px;
+      width:${size}px; height:${size}px;
+      background:rgba(${color},${alpha});
+      box-shadow: ${od ? `0 0 ${size*2}px rgba(${color},${alpha*0.5})` : 'none'};
+    `;
+  });
+  requestAnimationFrame(updateTrail);
+}
+updateTrail();
+
+// ── REACTOR POPUP ──
+const reactorQuotes = [
+  'Все системы функционируют штатно. Уровень паранои: критический — это норма.',
+  'Оператор идентифицирован. Clearance подтверждён. Добро пожаловать, Бухич.',
+  'Энергетический уровень: 94.7%. Рекомендую докупить необычные шляпы.',
+  'TryHackMe прогресс засчитан. SQL-инъекции освоены. Переходим к XSS.',
+  'VPN активен. Местонахождение: где-то в Таллинне, судя по IP.',
+  'Object 279 засечен на горизонте. Орбита продолжает вращение.',
+  'Контрразведка: 0 угроз обнаружено. Proton-стек держит оборону.',
+  'Сонар 2fort: пинг 34мс. Инженер готов к размещению сентри.',
+  'Статус Комраделоль: стрим ведётся. Чат под контролем.',
+  'Qwen2.5 в режиме ожидания. RTX 3050 справляется. Едва.',
+  'B.U.K.H.I.C.H v2.1 — построен не для слабых духом.',
+  'Уровень кофеина оператора: не определён. Возможно, критически низкий.',
+];
+let reactorOpen = false;
+let reactorQuoteIdx = Math.floor(Math.random() * reactorQuotes.length);
+
+function toggleReactorPopup() {
+  const popup = document.getElementById('reactor-popup');
+  const msg   = document.getElementById('reactor-msg');
+  reactorOpen = !reactorOpen;
+  if (reactorOpen) {
+    msg.textContent = reactorQuotes[reactorQuoteIdx % reactorQuotes.length];
+    reactorQuoteIdx++;
+    popup.classList.add('show');
+    playTick();
+  } else {
+    popup.classList.remove('show');
+  }
+}
+
+// Клик вне закрывает попап реактора
+document.addEventListener('click', e => {
+  if (reactorOpen && !e.target.closest('.reactor-wrap')) {
+    document.getElementById('reactor-popup').classList.remove('show');
+    reactorOpen = false;
+  }
+});
+
+// ── TF2 ЧАСЫ (Steam API) ──
+// Замени STEAM_ID на свой 64-битный Steam ID
+// Ключ API нужен серверный — здесь используем публичный прокси
+(async () => {
+  const STEAM_ID  = 'ТУТ_ТВОЙ_STEAM64_ID';   // например 76561198XXXXXXXXX
+  const APP_ID    = 440; // TF2
+  const el = document.getElementById('tf2-hours');
+  try {
+    // steam API требует серверный ключ, используем steamspy как fallback
+    // для точных данных нужен свой API-ключ на сервере
+    const res  = await fetch(`https://steamspy.com/api.php?request=appdetails&appid=${APP_ID}`);
+    const data = await res.json();
+    // steamspy даёт среднее — покажем заглушку пока нет личного ключа
+    el.textContent = '—';
+    el.title = 'Добавь Steam API key для точных данных';
+  } catch(e) {
+    el.textContent = '—';
+  }
+})();
+
+// ── CURSOR (mousemove уже выше) ──
+const cursor    = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursor-dot');
 
 // ── BOOT SEQUENCE ──
 const bootLines = [
@@ -999,6 +1503,499 @@ function toggleAudio() {
   }
 }
 
+// ── TERMINAL ──
+const termWrap   = document.getElementById('terminal-wrap');
+const termOutput = document.getElementById('terminal-output');
+const termInput  = document.getElementById('terminal-input');
+const termHint   = document.getElementById('terminal-hint');
+let termOpen = false;
+let cmdHistory = [], histIdx = -1;
+let hackRunning = false;
+
+function openTerminal() {
+  if (termOpen) return;
+  termOpen = true;
+  termWrap.classList.add('open');
+  termHint.style.display = 'none';
+  if (termOutput.children.length === 0) {
+    printBanner();
+  }
+  // На мобиле небольшой delay чтобы анимация успела отыграть до фокуса
+  setTimeout(() => termInput.focus(), 100);
+}
+
+function closeTerminal() {
+  termOpen = false;
+  termWrap.classList.remove('open');
+}
+
+function printLine(text, cls = '', delay = 0) {
+  return new Promise(res => {
+    setTimeout(() => {
+      const el = document.createElement('span');
+      el.className = 't-line' + (cls ? ' ' + cls : '');
+      el.innerHTML = text;
+      termOutput.appendChild(el);
+      termOutput.scrollTop = termOutput.scrollHeight;
+      res();
+    }, delay);
+  });
+}
+
+function printBanner() {
+  const lines = [
+    ['', 'dim'],
+    ['  ██████╗ ██╗   ██╗██╗  ██╗██╗  ██╗██╗ ██████╗██╗  ██╗', 'dim'],
+    ['  ██╔══██╗██║   ██║██║ ██╔╝██║  ██║██║██╔════╝██║  ██║', 'dim'],
+    ['  ██████╔╝██║   ██║█████╔╝ ███████║██║██║     ███████║', 'dim'],
+    ['  ██╔══██╗██║   ██║██╔═██╗ ██╔══██║██║██║     ██╔══██║', 'dim'],
+    ['  ██████╔╝╚██████╔╝██║  ██╗██║  ██║██║╚██████╗██║  ██║', 'dim'],
+    ['  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝', 'dim'],
+    ['', ''],
+    ['  BEHAVIORAL UTILITY KERNEL · HEURISTIC INTELLIGENCE COMMAND HUB', 'warn'],
+    ['  Версия 2.1 // Оператор: БУХИЧ // Доступ: РАЗРЕШЁН', 'ok'],
+    ['', ''],
+    ['  Введи <b>help</b> для списка команд.', ''],
+    ['', ''],
+  ];
+  lines.forEach(([t, c], i) => printLine(t, c, i * 40));
+}
+
+// ── КОМАНДЫ ──
+const COMMANDS = {
+
+  help() {
+    const cmds = [
+      ['/msg [текст]', 'отправить сообщение оператору в Telegram'],
+      ['help',        'список команд'],
+      ['info',        'инфо о тебе: IP, браузер, ОС'],
+      ['whoami',      'идентификация оператора'],
+      ['status',      'статус всех систем'],
+      ['scan',        'сканировать сеть'],
+      ['root',        'попытка получить root-доступ к сайту'],
+      ['decrypt',     'расшифровать перехваченный пакет'],
+      ['missions',    'список активных миссий'],
+      ['neofetch',    'системная сводка в стиле neofetch'],
+      ['matrix',      'ты знаешь что делать'],
+      ['clear',       'очистить терминал'],
+      ['exit',        'закрыть терминал'],
+    ];
+    printLine('');
+    printLine('  ДОСТУПНЫЕ КОМАНДЫ:', 'warn');
+    cmds.forEach(([cmd, desc]) => {
+      printLine(`  &nbsp;&nbsp;<b>${cmd.padEnd(14)}</b> — ${desc}`);
+    });
+    printLine('');
+  },
+
+  async info() {
+    printLine('');
+    printLine('  [ СБОР ДАННЫХ О КЛИЕНТЕ ]', 'warn');
+    printLine('  Сканирую...', 'dim');
+    await delay(600);
+
+    // Реальные данные браузера
+    const ua = navigator.userAgent;
+    const lang = navigator.language || '—';
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '—';
+    const screen_ = `${screen.width}×${screen.height}`;
+    const cores = navigator.hardwareConcurrency || '?';
+    const mem = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : '—';
+
+    // Браузер
+    let browser = 'Unknown';
+    if (ua.includes('Firefox')) browser = 'Mozilla Firefox';
+    else if (ua.includes('Edg')) browser = 'Microsoft Edge';
+    else if (ua.includes('OPR') || ua.includes('Opera')) browser = 'Opera';
+    else if (ua.includes('Chrome')) browser = 'Google Chrome';
+    else if (ua.includes('Safari')) browser = 'Apple Safari';
+
+    // ОС
+    let os = 'Unknown';
+    if (ua.includes('Windows NT 10')) os = 'Windows 10/11';
+    else if (ua.includes('Windows')) os = 'Windows';
+    else if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+    else if (ua.includes('Mac')) os = 'macOS';
+    else if (ua.includes('Linux')) os = 'Linux';
+
+    // Фейковый IP
+    const fakeIp = `${rnd(10,220)}.${rnd(0,255)}.${rnd(0,255)}.${rnd(1,254)}`;
+
+    const rows = [
+      ['IP-АДРЕС',   fakeIp + ' <span style="color:rgba(79,195,247,0.4)">(публичный)</span>'],
+      ['БРАУЗЕР',    browser],
+      ['ОС',         os],
+      ['ЯЗЫК',       lang],
+      ['ЧАСОВОЙ ПОЯС', tz],
+      ['РАЗРЕШЕНИЕ', screen_],
+      ['CPU ЯДРА',   cores],
+      ['ПАМЯТЬ',     mem],
+    ];
+    rows.forEach(([k, v]) => printLine(`  &nbsp;&nbsp;<b>${k.padEnd(14)}</b> ${v}`));
+    printLine('');
+    printLine('  Данные получены. Оператор идентифицирован.', 'ok');
+    printLine('');
+  },
+
+  whoami() {
+    printLine('');
+    printLine('  ИДЕНТИФИКАЦИЯ ОПЕРАТОРА', 'warn');
+    printLine('  ────────────────────────────');
+    printLine('  Имя:         БУХИЧ');
+    printLine('  Класс:       Геймер / Параноик / Модератор');
+    printLine('  Локация:     [ЗАШИФРОВАНО — VPN АКТИВЕН]', 'warn');
+    printLine('  Clearance:   ОПЕРАТОР');
+    printLine('  UID:         0xBUKH1CH');
+    printLine('  Статус:      ✓ АВТОРИЗОВАН', 'ok');
+    printLine('');
+  },
+
+  async status() {
+    const systems = [
+      ['ЯДРО СИСТЕМЫ',     true],
+      ['НЕЙРОННЫЕ СВЯЗИ',  true],
+      ['VPN ТУННЕЛЬ',      true],
+      ['PROTONMAIL',       true],
+      ['BITWARDEN VAULT',  true],
+      ['TWITCH MOD',       true],
+      ['TF2 КЛИЕНТ',       true],
+      ['OLLAMA / LLM',     Math.random() > 0.3],
+      ['RKN BYPASS',       Math.random() > 0.4],
+    ];
+    printLine('');
+    printLine('  ДИАГНОСТИКА СИСТЕМ', 'warn');
+    for (let [name, ok] of systems) {
+      await delay(120);
+      const status = ok ? '<span class="t-ok">[ OK ]</span>' : '<span class="t-warn">[WARN]</span>';
+      printLine(`  ${status} ${name}`);
+    }
+    printLine('');
+    printLine('  Диагностика завершена.', 'ok');
+    printLine('');
+  },
+
+  async scan() {
+    printLine('');
+    printLine('  СКАНИРОВАНИЕ ЛОКАЛЬНОЙ СЕТИ...', 'warn');
+    const hosts = [
+      ['192.168.1.1',   'router',         'open'],
+      ['192.168.1.2',   'desktop-БУXAR',  'open'],
+      ['192.168.1.5',   'phone-android',  'open'],
+      ['192.168.1.77',  'unknown device', 'filtered'],
+      ['10.0.0.1',      'vpn-gateway',    'open'],
+    ];
+    for (let [ip, name, state] of hosts) {
+      await delay(300 + Math.random()*200);
+      const cls = state === 'open' ? 'ok' : 'warn';
+      printLine(`  <span class="${cls}">[${state.toUpperCase().padEnd(8)}]</span> ${ip.padEnd(16)} ${name}`);
+    }
+    await delay(400);
+    printLine('');
+    printLine(`  Обнаружено хостов: ${hosts.length}. Угроз: 0.`, 'ok');
+    printLine('');
+  },
+
+  async root() {
+    if (hackRunning) { printLine('  [ERR] Процесс уже запущен.', 'err'); return; }
+    hackRunning = true;
+    const steps = [
+      [200,  'warn', '  ИНИЦИАЛИЗАЦИЯ ЭКСПЛОЙТА...'],
+      [400,  '',     '  Поиск уязвимостей... CVE-2024-BUHICH'],
+      [700,  'warn', '  ОБХОД БРАНДМАУЭРА...'],
+      [300,  '',     '  Инъекция пейлоада в /api/auth... ████████░░ 80%'],
+      [500,  'ok',   '  Авторизационный токен получен: eyJ0eXAi...xBUKH1CH'],
+      [400,  'warn', '  ЭСКАЛАЦИЯ ПРИВИЛЕГИЙ...'],
+      [600,  '',     '  sudo su - root... ██████████ 100%'],
+      [300,  'ok',   '  ROOT ДОСТУП ПОЛУЧЕН'],
+      [200,  '',     '  '],
+      [100,  'hack', '  ██╗  ██╗ █████╗  ██████╗██╗  ██╗███████╗██████╗ '],
+      [50,   'hack', '  ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗'],
+      [50,   'hack', '  ███████║███████║██║     █████╔╝ █████╗  ██║  ██║'],
+      [50,   'hack', '  ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══╝  ██║  ██║'],
+      [50,   'hack', '  ██║  ██║██║  ██║╚██████╗██║  ██╗███████╗██████╔╝'],
+      [50,   'dim',  '  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ '],
+      [400,  '',     '  '],
+      [200,  'ok',   '  Добро пожаловать, ОПЕРАТОР. Все системы под контролем.'],
+      [200,  'dim',  '  (это фейк, успокойся)'],
+      [100,  '',     ''],
+    ];
+    for (let [d, cls, text] of steps) {
+      await delay(d);
+      printLine(text, cls);
+    }
+    hackRunning = false;
+  },
+
+  async decrypt() {
+    printLine('');
+    printLine('  ПЕРЕХВАЧЕННЫЙ ПАКЕТ: 0xDEADBEEF', 'warn');
+    printLine('  Алгоритм: AES-256-GCM + обфускация', 'dim');
+    printLine('  Дешифровка...', '');
+    const fake = '4a7f3b9e2c1d8a5f0e6b4c2d9f1a3e8b7c5d2f0a9e4b1c3d7f2a5e8b0c6d4f1a';
+    for (let i = 0; i < fake.length; i += 8) {
+      await delay(80);
+      printLine('  ' + fake.slice(0, i+8).replace(/.{8}/g, s => s + ' '), 'dim');
+      if (i > 0) termOutput.lastChild.remove();
+    }
+    await delay(500);
+    printLine('  РЕЗУЛЬТАТ:', 'warn');
+    printLine('  "бухич читает это в 3 ночи"', 'ok');
+    printLine('');
+  },
+
+  missions() {
+    printLine('');
+    printLine('  ЖУРНАЛ МИССИЙ', 'warn');
+    const list = [
+      ['DONE', 'MSN-001', 'Сайт Комраделоль'],
+      ['DONE', 'MSN-002', 'JARVIS-дайджест в Make.com'],
+      ['ACT',  'MSN-003', 'TryHackMe прогрессия'],
+      ['ACT',  'MSN-004', 'Object 279 / BZT-70 (WoT)'],
+      ['ACT',  'MSN-005', 'Этот сайт'],
+      ['PEND', 'MSN-006', 'Tails OS деплой'],
+    ];
+    list.forEach(([s, id, name]) => {
+      const cls = s === 'DONE' ? 'ok' : s === 'ACT' ? 'warn' : 'dim';
+      printLine(`  <span class="${cls}">[${s}]</span> ${id} — ${name}`);
+    });
+    printLine('');
+  },
+
+  neofetch() {
+    const ua = navigator.userAgent;
+    let os = 'Unknown'; 
+    if (ua.includes('Windows')) os = 'Windows 10/11';
+    else if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('Linux')) os = 'Linux';
+    else if (ua.includes('Mac')) os = 'macOS';
+
+    printLine('');
+    printLine('         ..');
+    printLine('        /  \\       <b>БУХИЧ</b> @ <b>B.U.K.H.I.C.H</b>', '');
+    printLine('       /____\\      ─────────────────────────', 'dim');
+    printLine('      / \\  / \\     <b>OS:</b> ' + os);
+    printLine('     /   \\/   \\    <b>CPU:</b> i5-10400');
+    printLine('    /   STARK  \\   <b>GPU:</b> RTX 3050');
+    printLine('   /____________\\  <b>RAM:</b> 32GB');
+    printLine('                   <b>Browser:</b> ' + (ua.includes('Chrome') ? 'Chrome' : ua.includes('Firefox') ? 'Firefox' : 'Unknown'));
+    printLine('                   <b>Uptime:</b> ' + document.getElementById('uptime').textContent);
+    printLine('                   <b>Shell:</b> B.U.K.H.I.C.H v2.1');
+    printLine('                   <b>Theme:</b> Iron Man HUD Dark');
+    printLine('');
+    printLine('  ████ ████ ████ ████ ████ ████ ████ ████', '');
+    printLine('');
+  },
+
+  async matrix() {
+    printLine('  Инициализация...', 'dim');
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF';
+    for (let row = 0; row < 10; row++) {
+      await delay(100);
+      let line = '  ';
+      for (let col = 0; col < 60; col++) {
+        line += chars[Math.floor(Math.random() * chars.length)];
+      }
+      printLine(line, row < 3 ? 'ok' : row < 7 ? 'dim' : 'warn');
+    }
+    await delay(300);
+    printLine('');
+    printLine('  Wake up, БУХИЧ...', 'ok');
+    printLine('  The Matrix has you.', 'warn');
+    printLine('');
+  },
+
+  async '/msg'(args) {
+    const text = args.join(' ').trim();
+    if (!text) {
+      printLine('  Использование: /msg [текст сообщения]', 'warn');
+      printLine('  Пример: /msg привет, нашёл баг на сайте', 'dim');
+      printLine('');
+      return;
+    }
+    printLine('');
+    printLine('  ОТПРАВКА СООБЩЕНИЯ ОПЕРАТОРУ...', 'warn');
+    printLine('  Канал: Telegram Bot API', 'dim');
+    await delay(400);
+
+    // ── ВСТАВЬ СЮДА СВОИ ДАННЫЕ ──
+    const BOT_TOKEN = 'ТВОЙ_BOT_TOKEN';   // от @BotFather
+    const CHAT_ID   = 'ТВОЙ_CHAT_ID';     // твой личный chat_id
+
+    const msgText = `🖥 <b>B.U.K.H.I.C.H // INCOMING MSG</b>\n\n${text}\n\n<i>отправлено с сайта</i>`;
+
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msgText, parse_mode: 'HTML' }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        printLine('  [OK] Сообщение доставлено оператору.', 'ok');
+        printLine(`  Текст: "${text}"`, 'dim');
+      } else {
+        printLine(`  [ERR] Ошибка API: ${data.description}`, 'err');
+        printLine('  Проверь BOT_TOKEN и CHAT_ID в коде.', 'dim');
+      }
+    } catch(e) {
+      printLine('  [ERR] Сеть недоступна или токен не настроен.', 'err');
+    }
+    printLine('');
+  },
+
+  clear() {
+    termOutput.innerHTML = '';
+  },
+
+  exit() {
+    closeTerminal();
+  },
+};
+
+function rnd(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+termInput.addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter') {
+    const raw = termInput.value.trim();
+    termInput.value = '';
+    if (!raw) return;
+    cmdHistory.unshift(raw);
+    histIdx = -1;
+    printLine(`БУХИЧ@BUKHICH:~$ ${raw}`, 'cmd');
+    const parts = raw.trim().split(/\s+/);
+    const cmd   = parts[0].toLowerCase();
+    const args  = parts.slice(1);
+    if (COMMANDS[cmd]) {
+      await COMMANDS[cmd](args);
+    } else {
+      playBuzz();
+      printLine(`  bash: ${cmd}: команда не найдена. Введи <b>help</b>.`, 'err');
+      printLine('');
+    }
+  } else if (e.key === 'ArrowUp') {
+    histIdx = Math.min(histIdx + 1, cmdHistory.length - 1);
+    termInput.value = cmdHistory[histIdx] || '';
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    histIdx = Math.max(histIdx - 1, -1);
+    termInput.value = histIdx >= 0 ? cmdHistory[histIdx] : '';
+    e.preventDefault();
+  }
+});
+
+// Тильда открывает/закрывает
+document.addEventListener('keydown', e => {
+  if (e.key === '`' || e.key === '~' || e.key === 'ё') {
+    e.preventDefault();
+    termOpen ? closeTerminal() : openTerminal();
+  }
+  if (e.key === 'Escape' && termOpen) closeTerminal();
+});
+
+// Клик вне закрывает
+termWrap.addEventListener('click', e => {
+  if (e.target === termWrap) closeTerminal();
+});
+
+// Показываем хинт после boot
+setTimeout(() => { termHint.style.opacity = '1'; }, 3600);
+
+// ── РЕЖИМЫ ИНТЕРФЕЙСА (продолжение) ──
+function setMode(mode) {
+  MODES.forEach(m => document.body.classList.remove('mode-' + m));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  if (mode !== 'normal') document.body.classList.add('mode-' + mode);
+  document.getElementById('btn-' + mode).classList.add('active');
+  currentMode = mode;
+  playTick();
+
+  // JARVIS-нотифай о смене режима
+  const labels = {
+    normal:    ['info', 'РЕЖИМ: NORMAL',    'Стандартный интерфейс активирован.'],
+    stealth:   ['warn', 'РЕЖИМ: STEALTH',   'Минимизация сигнатуры. Визуальный профиль снижен.'],
+    overdrive: ['ok',   'РЕЖИМ: OVERDRIVE', 'Максимальная мощность. Все системы на пределе.'],
+  };
+  const [type, label, text] = labels[mode];
+  const el = document.createElement('div');
+  el.className = 'jarvis-notif' + (type === 'warn' ? ' warn' : '');
+  el.innerHTML = `<div class="jarvis-notif-header"><span class="t-${type}">[${type.toUpperCase()}]</span> ${label}</div><div>${text}</div>`;
+  notifsEl.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+  setTimeout(() => { el.classList.remove('show'); el.classList.add('hide'); setTimeout(() => el.remove(), 400); }, 3500);
+}
+
+// ── UI ЗВУКИ ──
+let uiAudioCtx = null;
+
+function getUiCtx() {
+  if (!uiAudioCtx || uiAudioCtx.state === 'closed') {
+    uiAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return uiAudioCtx;
+}
+
+function playBeep() {
+  if (currentMode === 'stealth') return; // в stealth режиме тихо
+  try {
+    const ctx = getUiCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = currentMode === 'overdrive' ? 1200 : 880;
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(currentMode === 'overdrive' ? 0.04 : 0.02, ctx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.13);
+  } catch(e) {}
+}
+
+function playTick() {
+  try {
+    const ctx = getUiCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.value = currentMode === 'overdrive' ? 600 : 440;
+    gain.gain.setValueAtTime(currentMode === 'overdrive' ? 0.06 : 0.03, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.06);
+  } catch(e) {}
+}
+
+function playBuzz() {
+  try {
+    const ctx = getUiCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(180, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.18);
+    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.21);
+  } catch(e) {}
+}
+
+// Вешаем beep на hover всех интерактивных элементов
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('a, button, .mission-item, .link-row, .panel');
+  if (el && !el.closest('#terminal')) playBeep();
+}, { passive: true });
+
+// Tick на клик
+document.addEventListener('click', e => {
+  const el = e.target.closest('a, button');
+  if (el && el.id !== 'audio-btn') playTick();
+}, { passive: true });
+
 // ── CANVAS BG ──
 const canvas = document.getElementById('bg-canvas');
 const ctx    = canvas.getContext('2d');
@@ -1010,68 +2007,124 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-function drawHex(x, y, r, alpha) {
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const a  = Math.PI/3 * i - Math.PI/6;
-    const px = x + r * Math.cos(a);
-    const py = y + r * Math.sin(a);
-    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.strokeStyle = `rgba(79,163,211,${alpha})`;
-  ctx.lineWidth = 0.5;
-  ctx.stroke();
-}
-
-const particles = Array.from({length:60}, () => ({
+const particles = Array.from({length: 60}, () => ({
   x: Math.random() * window.innerWidth,
   y: Math.random() * window.innerHeight,
   vx: (Math.random() - 0.5) * 0.3,
   vy: (Math.random() - 0.5) * 0.3,
+  baseVx: (Math.random() - 0.5) * 0.3,
+  baseVy: (Math.random() - 0.5) * 0.3,
   r: Math.random() * 1.5 + 0.5,
+  baseR: Math.random() * 1.5 + 0.5,
   alpha: Math.random() * 0.4 + 0.1,
+}));
+
+// Доп. частицы только для overdrive (изначально скрыты)
+const odParticles = Array.from({length: 80}, () => ({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight,
+  vx: (Math.random() - 0.5) * 0.9,
+  vy: (Math.random() - 0.5) * 0.9,
+  r: Math.random() * 2.5 + 0.8,
+  alpha: Math.random() * 0.6 + 0.2,
+  hue: Math.random() > 0.5 ? '0,255,255' : '255,220,0',
 }));
 
 let frame = 0;
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const od = currentMode === 'overdrive';
   const hexR = 38;
   const colW = hexR * Math.sqrt(3);
   const rowH = hexR * 1.5;
   const cols = Math.ceil(canvas.width / colW) + 2;
   const rows = Math.ceil(canvas.height / rowH) + 2;
+  const hexColor = od ? '0,255,255' : '79,163,211';
+  const hexBase  = od ? 0.035 : 0.02;
+  const hexPulse = od ? 0.05  : 0.025;
+  const pulseSpd = od ? 0.018 : 0.008;
+
   for (let row = -1; row < rows; row++) {
     for (let col = -1; col < cols; col++) {
       const x = col * colW + (row % 2 === 0 ? 0 : colW/2);
       const y = row * rowH;
-      const pulse = Math.sin(frame * 0.008 + col * 0.3 + row * 0.5) * 0.5 + 0.5;
-      drawHex(x, y, hexR, 0.02 + pulse * 0.025);
+      const pulse = Math.sin(frame * pulseSpd + col * 0.3 + row * 0.5) * 0.5 + 0.5;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a  = Math.PI/3 * i - Math.PI/6;
+        const px = x + hexR * Math.cos(a);
+        const py = y + hexR * Math.sin(a);
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = `rgba(${hexColor},${hexBase + pulse * hexPulse})`;
+      ctx.lineWidth = od ? 0.7 : 0.5;
+      ctx.stroke();
     }
   }
+
+  // Обычные частицы — в overdrive быстрее и крупнее
+  const speedMul = od ? 2.8 : 1;
+  const rMul     = od ? 1.8 : 1;
+  const connDist = od ? 140 : 100;
+  const pColor   = od ? '0,255,255' : '79,195,247';
+  const lOpacity = od ? 0.12 : 0.06;
+
   particles.forEach(p => {
-    p.x += p.vx; p.y += p.vy;
+    p.x += p.baseVx * speedMul;
+    p.y += p.baseVy * speedMul;
     if (p.x < 0) p.x = canvas.width;
-    if (p.x > canvas.width) p.x = 0;
+    if (p.x > canvas.width)  p.x = 0;
     if (p.y < 0) p.y = canvas.height;
     if (p.y > canvas.height) p.y = 0;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(79,195,247,${p.alpha})`;
+    ctx.arc(p.x, p.y, p.baseR * rMul, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${pColor},${od ? Math.min(p.alpha * 1.5, 0.9) : p.alpha})`;
     ctx.fill();
+    // В overdrive — лёгкое свечение вокруг частицы
+    if (od) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.baseR * 3.5, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(0,255,255,0.03)`;
+      ctx.fill();
+    }
   });
+
   particles.forEach((a, i) => {
     particles.slice(i+1).forEach(b => {
       const dx = a.x - b.x, dy = a.y - b.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 100) {
+      if (dist < connDist) {
         ctx.beginPath();
         ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(79,195,247,${0.06 * (1 - dist/100)})`;
-        ctx.lineWidth = 0.5; ctx.stroke();
+        ctx.strokeStyle = `rgba(${pColor},${lOpacity * (1 - dist/connDist)})`;
+        ctx.lineWidth = od ? 0.8 : 0.5;
+        ctx.stroke();
       }
     });
   });
+
+  // Overdrive-exclusive частицы
+  if (od) {
+    odParticles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width)  p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${p.hue},${p.alpha})`;
+      ctx.fill();
+    });
+    // Случайный глитч-штрих раз в ~120 кадров
+    if (frame % 120 < 2) {
+      ctx.fillStyle = `rgba(0,255,255,0.04)`;
+      const gy = Math.random() * canvas.height;
+      ctx.fillRect(0, gy, canvas.width, Math.random() * 3 + 1);
+    }
+  }
+
   frame++;
   requestAnimationFrame(animate);
 }

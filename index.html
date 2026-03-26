@@ -1358,26 +1358,32 @@ document.addEventListener('click', e => {
   }
 });
 
-// ── TF2 ЧАСЫ (Steam API) ──
-// Замени STEAM_ID на свой 64-битный Steam ID
-// Ключ API нужен серверный — здесь используем публичный прокси
-(async () => {
-  const STEAM_ID  = 'ТУТ_ТВОЙ_STEAM64_ID';   // например 76561198XXXXXXXXX
-  const APP_ID    = 440; // TF2
+// — TF2 ЧАСЫ (Steam API via Worker) —
+const WORKER_URL = 'https://bukhich-proxy.prebywatel.workers.dev';
+const SESSION_START = Date.now();
+let BASE_HOURS = null;
+
+async function initTF2Counter() {
   const el = document.getElementById('tf2-hours');
   try {
-    // steam API требует серверный ключ, используем steamspy как fallback
-    // для точных данных нужен свой API-ключ на сервере
-    const res  = await fetch(`https://steamspy.com/api.php?request=appdetails&appid=${APP_ID}`);
+    const res = await fetch(WORKER_URL + '/steam');
     const data = await res.json();
-    // steamspy даёт среднее — покажем заглушку пока нет личного ключа
-    el.textContent = '—';
-    el.title = 'Добавь Steam API key для точных данных';
+    BASE_HOURS = parseFloat(data.hours);
+    tickTF2();
   } catch(e) {
     el.textContent = '—';
   }
-})();
+}
 
+function tickTF2() {
+  const el = document.getElementById('tf2-hours');
+  setInterval(() => {
+    const elapsed = (Date.now() - SESSION_START) / 3600000;
+    el.textContent = (BASE_HOURS + elapsed).toFixed(1);
+  }, 1000);
+}
+
+initTF2Counter();
 // ── CURSOR (mousemove уже выше) ──
 const cursor    = document.getElementById('cursor');
 const cursorDot = document.getElementById('cursor-dot');
@@ -1829,7 +1835,7 @@ const COMMANDS = {
     await delay(400);
 
     // ── ВСТАВЬ СЮДА СВОИ ДАННЫЕ ──
-const WEBHOOK_URL = 'https://hook.eu1.make.com/degou7thridxtk86gb37yvrei3pvu6d7';
+const WEBHOOK_URL = 'https://bukhich-proxy.prebywatel.workers.dev';
 
 try {
   const res = await fetch(WEBHOOK_URL, {

@@ -1576,7 +1576,7 @@ const COMMANDS = {
 
   help() {
     const cmds = [
-      ['/msg [текст]', 'отправить сообщение оператору в Telegram'],
+      ['msg [текст]', 'отправить сообщение оператору в Telegram'],
       ['help',        'список команд'],
       ['info',        'инфо о тебе: IP, браузер, ОС'],
       ['whoami',      'идентификация оператора'],
@@ -1815,11 +1815,11 @@ const COMMANDS = {
     printLine('');
   },
 
-  async '/msg'(args) {
+  async 'msg'(args) {
     const text = args.join(' ').trim();
     if (!text) {
-      printLine('  Использование: /msg [текст сообщения]', 'warn');
-      printLine('  Пример: /msg привет, нашёл баг на сайте', 'dim');
+      printLine('  Использование: msg [текст сообщения]', 'warn');
+      printLine('  Пример: msg привет, нашёл баг на сайте', 'dim');
       printLine('');
       return;
     }
@@ -1829,19 +1829,16 @@ const COMMANDS = {
     await delay(400);
 
     // ── ВСТАВЬ СЮДА СВОИ ДАННЫЕ ──
-    const BOT_TOKEN = 'ТВОЙ_BOT_TOKEN';   // от @BotFather
-    const CHAT_ID   = 'ТВОЙ_CHAT_ID';     // твой личный chat_id
+const WEBHOOK_URL = 'https://hook.eu1.make.com/degou7thridxtk86gb37yvrei3pvu6d7';
 
-    const msgText = `🖥 <b>B.U.K.H.I.C.H // INCOMING MSG</b>\n\n${text}\n\n<i>отправлено с сайта</i>`;
-
-    try {
-      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: msgText, parse_mode: 'HTML' }),
-      });
-      const data = await res.json();
-      if (data.ok) {
+try {
+  const res = await fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: `📨 Сообщение с сайта B.U.K.H.I.C.H:\n\n${text}` }),
+  });
+  const data = { ok: res.ok };
+  if (data.ok) {
         printLine('  [OK] Сообщение доставлено оператору.', 'ok');
         printLine(`  Текст: "${text}"`, 'dim');
       } else {

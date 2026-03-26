@@ -897,10 +897,7 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
 .reactor-wrap { position: relative; cursor: pointer !important; }
 
 #reactor-popup {
-  position: absolute;
-  top: calc(100% + 14px);
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
   background: rgba(2,6,12,0.97);
   border: 1px solid rgba(79,195,247,0.3);
   border-top: 2px solid var(--blue);
@@ -913,7 +910,7 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  z-index: 20;
+  z-index: 200;
   letter-spacing: 0.06em;
   line-height: 1.7;
 }
@@ -1006,9 +1003,6 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
           <div class="reactor-inner"></div>
         </div>
       </div>
-      <div id="reactor-popup">
-        <div class="rp-label">B.U.K.H.I.C.H // СТАТУС СИСТЕМЫ</div>
-        <div id="reactor-msg">Инициализация...</div>
       </div>
     </div>
     <div class="hero-text">
@@ -1017,7 +1011,7 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
       <div class="hero-sub">// OPERATOR · GAMER · ENTHUSIAST</div>
       <div class="hero-desc">
         <span class="hi">Приветствую. Я B.U.K.H.I.C.H.</span>
-        Представляю моего оператора — <strong style="color:var(--blue-bright)">Бухича</strong>. Геймер, интересуется кибербезопасностью и приватностью, пишет на Node.js, модерирует твич-каналы. Не укусит.
+        Представляю моего оператора — Бухича. Геймер, интересуется кибербезопасностью и приватностью.
       </div>
     </div>
   </section>
@@ -1036,7 +1030,7 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
       <div class="panel-label">СФЕРЫ ИНТЕРЕСОВ</div>
       <ul>
         <li>Кибербезопасность / Privacy</li>
-        <li>Node.js / Автоматизация</li>
+        <li>Автоматизация</li>
         <li>Локальные LLM</li>
         <li>Кино: нуар, боевики</li>
       </ul>
@@ -1074,12 +1068,8 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
           <div class="bar-track"><div class="bar-fill" style="--w:76%"></div></div>
         </div>
         <div class="bar-item">
-          <div class="bar-label"><span>NODE.JS</span><span>62%</span></div>
-          <div class="bar-track"><div class="bar-fill gold" style="--w:62%"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-label"><span>МОДЕРАЦИЯ</span><span>90%</span></div>
-          <div class="bar-track"><div class="bar-fill gold" style="--w:90%"></div></div>
+          <div class="bar-label"><span>CS 2 GAME SENSE</span><span>20%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="--w:20%"></div></div>
         </div>
       </div>
     </div>
@@ -1090,26 +1080,17 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
     <div class="panel-label">ЖУРНАЛ МИССИЙ</div>
     <div class="mission-list">
 
-      <div class="mission-item complete">
+      <div class="mission-item pending">
         <div class="mission-id">MSN-001</div>
-        <div class="mission-info">
-          <div class="mission-name">Сайт Комраде Лоли</div>
-          <div class="mission-desc">Деплой персонального сайта стримера. Советский агитпроп × аниме-эстетика. GitHub Pages.</div>
-        </div>
-        <div class="mission-badge badge-complete">ВЫПОЛНЕНО</div>
-      </div>
-
-      <div class="mission-item active">
-        <div class="mission-id">MSN-003</div>
         <div class="mission-info">
           <div class="mission-name">TryHackMe прогрессия</div>
           <div class="mission-desc">Изучение веб-уязвимостей и пентест-методик. Активный прогресс по трекам.</div>
         </div>
-        <div class="mission-badge badge-active">В ПРОЦЕССЕ</div>
+        <div class="mission-badge badge-pending">В ОЧЕРЕДИ</div>
       </div>
 
       <div class="mission-item active">
-        <div class="mission-id">MSN-004</div>
+        <div class="mission-id">MSN-002</div>
         <div class="mission-info">
           <div class="mission-name">Object 279 / BZT-70</div>
           <div class="mission-desc">Получение tier-11 техники через систему Орбита. World of Tanks, Lesta-сервер.</div>
@@ -1118,7 +1099,7 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
       </div>
 
       <div class="mission-item pending">
-        <div class="mission-id">MSN-005</div>
+        <div class="mission-id">MSN-003</div>
         <div class="mission-info">
           <div class="mission-name">Локальная LLM-инфраструктура</div>
           <div class="mission-desc">Деплой Ollama + Qwen2.5 на RTX 3050. Интеграция в B.U.K.H.I.C.H.</div>
@@ -1126,6 +1107,14 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
         <div class="mission-badge badge-pending">В ОЧЕРЕДИ</div>
       </div>
 
+      <div class="mission-item active">
+        <div class="mission-id">MSN-004</div>
+        <div class="mission-info">
+          <div class="mission-name">Повышение всех дворфов в DRG</div>
+          <div class="mission-desc">Повысить всех дворфов до 1 звезды.</div>
+        </div>
+        <div class="mission-badge badge-active">В ПРОЦЕССЕ</div>
+      </div>
     </div>
   </div>
 
@@ -1141,6 +1130,11 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
       <a class="link-row" href="https://twitch.tv/byx_byxovich">
         <span class="link-platform">TWITCH</span>
         <span class="link-handle">byx_byxovich</span>
+        <span class="link-arrow">→</span>
+      </a>
+      <a class="link-row" href="https://steamcommunity.com/id/jetstream_fedor/">
+        <span class="link-platform">STEAM</span>
+        <span class="link-handle">Steam profile</span>
         <span class="link-arrow">→</span>
       </a>
     </div>
@@ -1327,12 +1321,28 @@ let reactorOpen = false;
 let reactorQuoteIdx = Math.floor(Math.random() * reactorQuotes.length);
 
 function toggleReactorPopup() {
-  const popup = document.getElementById('reactor-popup');
-  const msg   = document.getElementById('reactor-msg');
-  reactorOpen = !reactorOpen;
+  const popup   = document.getElementById('reactor-popup');
+  const msg     = document.getElementById('reactor-msg');
+  reactorOpen   = !reactorOpen;
+
   if (reactorOpen) {
     msg.textContent = reactorQuotes[reactorQuoteIdx % reactorQuotes.length];
     reactorQuoteIdx++;
+
+    // Берём координаты самого реактора (круга)
+    const reactor = document.querySelector('.reactor');
+    const rect    = reactor.getBoundingClientRect();
+    const popupW  = 220;
+
+    // Центруем попап по X относительно реактора, показываем ниже
+    let left = rect.left + rect.width / 2 - popupW / 2;
+    let top  = rect.bottom + 12;
+
+    // Не выходим за края
+    left = Math.max(8, Math.min(left, window.innerWidth - popupW - 8));
+
+    popup.style.left = left + 'px';
+    popup.style.top  = top  + 'px';
     popup.classList.add('show');
     playTick();
   } else {
@@ -2130,6 +2140,11 @@ function animate() {
 }
 animate();
 </script>
+
+<div id="reactor-popup">
+  <div class="rp-label">B.U.K.H.I.C.H // СТАТУС СИСТЕМЫ</div>
+  <div id="reactor-msg">Инициализация...</div>
+</div>
 
 </body>
 </html>

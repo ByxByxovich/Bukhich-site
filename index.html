@@ -1835,8 +1835,10 @@ try {
   const res = await fetch(WEBHOOK_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: `📨 Сообщение с сайта B.U.K.H.I.C.H:\n\n${text}` }),
-  });
+body: JSON.stringify({ 
+    type: "msg",
+    text: `📨 Сообщение с сайта B.U.K.H.I.C.H:\n\n${text}` 
+}),  });
   const data = { ok: res.ok };
   if (data.ok) {
         printLine('  [OK] Сообщение доставлено оператору.', 'ok');

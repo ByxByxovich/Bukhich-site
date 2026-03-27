@@ -1593,6 +1593,7 @@ const COMMANDS = {
       ['missions',    'список активных миссий'],
       ['neofetch',    'системная сводка в стиле neofetch'],
       ['matrix',      'ты знаешь что делать'],
+      ['arni',        '???'],
       ['clear',       'очистить терминал'],
       ['exit',        'закрыть терминал'],
     ];
@@ -1857,6 +1858,83 @@ try {
   printLine('  [ERR] Сеть недоступна или токен не настроен.', 'err');
 }
 printLine('');
+  },
+
+  async arni(args) {
+    const artLines = [
+      '⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠻⠿⠛⠻⠿⠛⠛⣿⡿⣿⣿⣿⣿⣿⣿⣿',
+      '⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠛⠉⣁⠄⢠⣦⡀⠄⢀⣾⡀⠄⡄⠘⡫⠹⢿⣿⣿⣿',
+      '⣿⣿⣿⣿⣿⣿⡿⠋⠁⠄⣶⡄⣿⣧⣾⣿⣷⣾⣿⣿⣧⣾⣧⣾⠇⠄⡄⠹⣿⣿',
+      '⣿⣿⣿⣿⠟⠁⢒⣺⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⣠⣾⡇⣰⢹⣿',
+      '⣿⣿⣿⠐⠚⣿⣿⣿⣿⣿⡿⠟⠉⠄⠄⠄⠄⠄⠄⠄⠄⠉⠉⠛⠻⣯⣾⣯⣿⣿',
+      '⣿⣿⠏⣠⣾⣿⣿⣿⣿⣿⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠹⣿⣿⣿',
+      '⣿⠏⣰⡿⣿⣿⣿⣿⣿⣿⣄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣿⣿⣿',
+      '⡟⠰⠋⣼⢿⣿⣿⣿⣿⣿⠟⠄⠄⢀⣠⣤⣴⣶⣶⣶⣤⣴⣀⠄⣀⣀⠄⢹⣿⣿',
+      '⣧⠄⡜⢡⣾⣿⣿⣿⣿⣏⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣿⣿',
+      '⣿⡈⢀⠟⢁⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠈⣿⣿⣿⣿⣿⣿',
+      '⣿⣧⡈⣠⣄⠉⠻⢿⣿⠄⠄⠄⠄⠉⠙⠛⠻⠿⠿⠿⠋⠄⠄⠄⣈⠻⣿⣟⣹⣿',
+      '⣿⣿⣇⠟⣈⣧⡔⠄⠈⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠠⣶⣿⣿⣿⠄⠻⠅⣿⣿',
+      '⣿⣿⣿⡠⡛⠩⠷⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢃⠄⠄⠄⣿⣿',
+      '⣿⣿⣿⣷⡉⢁⣀⡠⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⠴⠖⠛⠓⠚⢆⠄⣸⣿⣿',
+      '⣿⣿⣿⣿⣿⠄⠉⠁⠄⢀⣀⣀⣀⡀⠄⠄⠄⠄⠈⠄⠄⣴⣿⠿⣷⠊⢣⣿⣿⣿',
+      '⣿⣿⣿⣿⣿⠄⠄⢀⡙⢮⣻⣿⣿⣧⣤⣶⣶⣤⣀⠄⠄⠄⣀⣀⡀⠄⠄⣿⣿⣿',
+      '⣿⣿⣿⡿⣟⣀⡀⠄⠙⢦⡙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠄⣰⣿⣿⣿',
+      '⣿⣿⣿⠃⣍⡉⠛⢦⠳⣄⠉⠳⣝⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⣋⣠⣶⣿⣿⣿⣿',
+      '⣿⣿⡃⠄⠘⣿⣷⣤⣳⡘⣿⣦⡈⠛⢿⣿⣿⣿⣿⣿⡏⢠⣿⣿⣿⣿⣿⣿⣿⣿',
+      '⢿⣿⣿⣷⣦⣽⣿⣿⣿⣷⡈⢿⣿⣷⣦⣜⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⣿⣿⣿',
+      '⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣌⣿⣿⣿⣿⣿⣿⣿⣿⣷⣮⣛⠿⣿⣿⣿⣿⣿⣿',
+      '⣿⡎⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣯⡉⠙⢻⣷⣮⣍⡻⢿⣿⣿',
+      '⣿⣿⡈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠙⣿⠆⢸⣿⣿⣿⣿⣶⣬⣛',
+    ];
+
+    printLine('');
+    for (const line of artLines) {
+      const el = document.createElement('span');
+      el.className = 't-line dim';
+      el.innerHTML = `<span style="font-size:7px;letter-spacing:0;line-height:1.1;">${line}</span>`;
+      termOutput.appendChild(el);
+      termOutput.scrollTop = termOutput.scrollHeight;
+      await delay(30);
+    }
+
+    await delay(400);
+    printLine('');
+    await printLine('', 'warn');
+    const phrase = '  Hasta la vista, baby.';
+    for (let i = 1; i <= phrase.length; i++) {
+      termOutput.lastElementChild.textContent = phrase.slice(0, i);
+      await delay(50);
+    }
+
+    await delay(600);
+
+    try {
+      const audio = new Audio('terminator8bit.mp3');
+      audio.volume = 0;
+      audio.play();
+      let vol = 0;
+      const fadeIn = setInterval(() => {
+        vol = Math.min(vol + 0.05, 0.8);
+        audio.volume = vol;
+        if (vol >= 0.8) clearInterval(fadeIn);
+      }, 80);
+      setTimeout(() => {
+        const fadeOut = setInterval(() => {
+          audio.volume = Math.max(audio.volume - 0.03, 0);
+          if (audio.volume <= 0) { clearInterval(fadeOut); audio.pause(); }
+        }, 80);
+      }, 15000);
+    } catch(e) {}
+
+    printLine('');
+    await delay(800);
+    printLine('');
+    printLine('  Открываю портал в фан-клуб...', 'dim');
+    await delay(600);
+    printLine('  discord.com/invite/7C8E59f7vy', 'ok');
+    await delay(400);
+    window.open('https://discord.com/invite/7C8E59f7vy', '_blank');
+    printLine('');
   },
 
   clear() {
@@ -2146,6 +2224,35 @@ function animate() {
 animate();
 let _tdIv = null;
 
+function showCrack() {
+  const existing = document.getElementById('crack-overlay');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'crack-overlay';
+  el.style.cssText = 'position:fixed;inset:0;z-index:999;pointer-events:none;';
+  el.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <line x1="500" y1="200" x2="480" y2="350" stroke="rgba(79,195,247,0.9)" stroke-width="2"/>
+    <line x1="480" y1="350" x2="420" y2="480" stroke="rgba(79,195,247,0.7)" stroke-width="1.5"/>
+    <line x1="480" y1="350" x2="560" y2="500" stroke="rgba(79,195,247,0.7)" stroke-width="1.5"/>
+    <line x1="500" y1="200" x2="540" y2="320" stroke="rgba(79,195,247,0.6)" stroke-width="1"/>
+    <line x1="540" y1="320" x2="620" y2="400" stroke="rgba(79,195,247,0.5)" stroke-width="1"/>
+    <line x1="540" y1="320" x2="490" y2="420" stroke="rgba(79,195,247,0.5)" stroke-width="1"/>
+    <line x1="420" y1="480" x2="380" y2="580" stroke="rgba(79,195,247,0.4)" stroke-width="1"/>
+    <line x1="420" y1="480" x2="460" y2="560" stroke="rgba(79,195,247,0.4)" stroke-width="1"/>
+    <line x1="560" y1="500" x2="600" y2="600" stroke="rgba(79,195,247,0.4)" stroke-width="1"/>
+    <line x1="560" y1="500" x2="510" y2="620" stroke="rgba(79,195,247,0.3)" stroke-width="0.8"/>
+    <circle cx="500" cy="200" r="6" fill="rgba(79,195,247,0.15)" stroke="rgba(79,195,247,0.8)" stroke-width="1"/>
+    <circle cx="500" cy="200" r="20" fill="none" stroke="rgba(79,195,247,0.3)" stroke-width="0.5"/>
+    <circle cx="500" cy="200" r="40" fill="none" stroke="rgba(79,195,247,0.15)" stroke-width="0.5"/>
+  </svg>`;
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 2s ease';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 2000);
+  }, 12000);
+}
+
 function showTransferDialog() {
   const ov = document.getElementById('transfer-overlay');
   ov.style.display = 'flex';
@@ -2206,6 +2313,35 @@ btn.onclick = () => {
   playTick();
   document.getElementById('transfer-overlay').style.display = 'none';
 };
+}
+
+function showCrack() {
+  const existing = document.getElementById('crack-overlay');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'crack-overlay';
+  el.style.cssText = 'position:fixed; inset:0; z-index:999; pointer-events:none;';
+  el.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <line x1="500" y1="200" x2="480" y2="350" stroke="rgba(79,195,247,0.9)" stroke-width="2"/>
+    <line x1="480" y1="350" x2="420" y2="480" stroke="rgba(79,195,247,0.7)" stroke-width="1.5"/>
+    <line x1="480" y1="350" x2="560" y2="500" stroke="rgba(79,195,247,0.7)" stroke-width="1.5"/>
+    <line x1="500" y1="200" x2="540" y2="320" stroke="rgba(79,195,247,0.6)" stroke-width="1"/>
+    <line x1="540" y1="320" x2="620" y2="400" stroke="rgba(79,195,247,0.5)" stroke-width="1"/>
+    <line x1="540" y1="320" x2="490" y2="420" stroke="rgba(79,195,247,0.5)" stroke-width="1"/>
+    <line x1="420" y1="480" x2="380" y2="580" stroke="rgba(79,195,247,0.4)" stroke-width="1"/>
+    <line x1="420" y1="480" x2="460" y2="560" stroke="rgba(79,195,247,0.4)" stroke-width="1"/>
+    <line x1="560" y1="500" x2="600" y2="600" stroke="rgba(79,195,247,0.4)" stroke-width="1"/>
+    <line x1="560" y1="500" x2="510" y2="620" stroke="rgba(79,195,247,0.3)" stroke-width="0.8"/>
+    <circle cx="500" cy="200" r="6" fill="rgba(79,195,247,0.15)" stroke="rgba(79,195,247,0.8)" stroke-width="1"/>
+    <circle cx="500" cy="200" r="20" fill="none" stroke="rgba(79,195,247,0.3)" stroke-width="0.5"/>
+    <circle cx="500" cy="200" r="40" fill="none" stroke="rgba(79,195,247,0.15)" stroke-width="0.5"/>
+  </svg>`;
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 2s ease';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 2000);
+  }, 12000);
 }
 </script>
 <div id="transfer-overlay" style="display:none; position:fixed; inset:0; z-index:800; background:rgba(0,0,0,0.72); align-items:center; justify-content:center;">

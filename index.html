@@ -1843,7 +1843,7 @@ try {
     headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ 
     type: "msg",
-    text: `📨 Сообщение с сайта B.U.K.H.I.C.H:\n\n${text}` 
+    text: text 
 }),  });
   const data = { ok: res.ok };
   if (data.ok) {

@@ -1833,7 +1833,7 @@ const COMMANDS = {
     printLine('  ОТПРАВКА СООБЩЕНИЯ ОПЕРАТОРУ...', 'warn');
     printLine('  Канал: Telegram Bot API', 'dim');
     await delay(400);
-
+showTransferDialog(); // <-- сюда
     // ── ВСТАВЬ СЮДА СВОИ ДАННЫЕ ──
 const WEBHOOK_URL = 'https://bukhich-proxy.prebywatel.workers.dev';
 
@@ -2144,12 +2144,100 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
+let _tdIv = null;
+
+function showTransferDialog() {
+  const ov = document.getElementById('transfer-overlay');
+  ov.style.display = 'flex';
+  document.getElementById('td-ok-btn').style.display = 'none';
+  document.getElementById('td-fill').style.width = '0%';
+  document.getElementById('td-pct').textContent = '0%';
+  document.getElementById('td-bytes').textContent = '0 байт';
+  document.getElementById('td-status').style.color = '#7fb8d4';
+  document.getElementById('td-status').textContent = 'Инициализация канала связи...';
+
+  let p = 0;
+  const totalBytes = Math.floor(Math.random() * 600 + 200);
+  const statuses = [
+    [0,  'Инициализация канала связи...'],
+    [20, 'Установка соединения с Telegram API...'],
+    [45, 'Шифрование пакета...'],
+    [65, 'Передача данных...'],
+    [88, 'Верификация доставки...'],
+  ];
+  _tdIv = setInterval(() => {
+    p = Math.min(p + Math.random() * 4 + 1.5, 99);
+    document.getElementById('td-fill').style.width = p + '%';
+    document.getElementById('td-pct').textContent = Math.floor(p) + '%';
+    document.getElementById('td-bytes').textContent = Math.floor((p / 100) * totalBytes) + ' байт';
+    for (let i = statuses.length - 1; i >= 0; i--) {
+      if (p >= statuses[i][0]) {
+        document.getElementById('td-status').textContent = statuses[i][1];
+        break;
+      }
+    }
+  }, 80);
+}
+
+function hideTransferDialog(ok) {
+  clearInterval(_tdIv);
+  document.getElementById('td-fill').style.width = '100%';
+  document.getElementById('td-pct').textContent = '100%';
+  const st = document.getElementById('td-status');
+  st.style.color = ok ? '#00e676' : '#ef5350';
+  st.textContent = ok ? 'Сообщение доставлено оператору.' : 'Ошибка передачи. Попробуй через VPN.';
+  document.getElementById('td-ok-btn').style.display = 'block';
+}
 </script>
+<div id="transfer-overlay" style="display:none; position:fixed; inset:0; z-index:800; background:rgba(0,0,0,0.72); align-items:center; justify-content:center;">
+  <div style="width:480px; max-width:92vw; background:rgba(2,6,12,0.97); border:1px solid rgba(79,195,247,0.25); border-top:2px solid #4fc3f7; clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); box-shadow:0 0 40px rgba(79,195,247,0.08); font-family:'Share Tech Mono',monospace;">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 14px; border-bottom:1px solid rgba(79,195,247,0.1); font-size:9px; letter-spacing:0.2em;">
+      <span style="color:#c8a84b;">B.U.K.H.I.C.H // ПЕРЕДАЧА ДАННЫХ</span>
+    </div>
+    <div style="padding:20px 18px 18px;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px;">
+        <div style="flex-shrink:0; width:52px; height:52px; border:1px solid rgba(79,195,247,0.2); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); display:flex; align-items:center; justify-content:center; background:rgba(79,195,247,0.04); position:relative;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="7" width="16" height="12" rx="1" stroke="#4fc3f7" stroke-width="1" opacity="0.6"/>
+            <line x1="5" y1="10" x2="15" y2="10" stroke="#4fc3f7" stroke-width="0.8" opacity="0.4"/>
+            <line x1="5" y1="13" x2="12" y2="13" stroke="#4fc3f7" stroke-width="0.8" opacity="0.4"/>
+            <path d="M20 13 L26 13 M23 10 L26 13 L23 16" stroke="#c8a84b" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <div style="flex:1;">
+          <div style="display:flex; gap:6px; font-size:10px; margin-bottom:4px; letter-spacing:0.1em;">
+            <span style="color:#6b5520; width:80px; flex-shrink:0;">КАНАЛ</span>
+            <span style="color:#4fc3f7;">Telegram Bot API</span>
+          </div>
+          <div style="display:flex; gap:6px; font-size:10px; margin-bottom:4px; letter-spacing:0.1em;">
+            <span style="color:#6b5520; width:80px; flex-shrink:0;">ПОЛУЧАТЕЛЬ</span>
+            <span style="color:#7fb8d4;">ОПЕРАТОР</span>
+          </div>
+          <div style="display:flex; gap:6px; font-size:10px; margin-bottom:4px; letter-spacing:0.1em;">
+            <span style="color:#6b5520; width:80px; flex-shrink:0;">ПРОТОКОЛ</span>
+            <span style="color:#7fb8d4;">HTTPS / TLS 1.3</span>
+          </div>
+          <div style="display:flex; gap:6px; font-size:10px; letter-spacing:0.1em;">
+            <span style="color:#6b5520; width:80px; flex-shrink:0;">ПЕРЕДАНО</span>
+            <span style="color:#7fb8d4;" id="td-bytes">0 байт</span>
+          </div>
+        </div>
+      </div>
 
-<div id="reactor-popup">
-  <div class="rp-label">B.U.K.H.I.C.H // СТАТУС СИСТЕМЫ</div>
-  <div id="reactor-msg">Инициализация...</div>
+      <div style="display:flex; justify-content:space-between; font-size:9px; letter-spacing:0.14em; color:#c8a84b; margin-bottom:6px;">
+        <span>ПЕРЕДАЧА СООБЩЕНИЯ</span><span id="td-pct">0%</span>
+      </div>
+      <div style="height:4px; background:rgba(79,195,247,0.08); margin-bottom:14px;">
+        <div id="td-fill" style="height:100%; background:linear-gradient(90deg,#1a4a5c,#4fc3f7); box-shadow:0 0 10px rgba(79,195,247,0.5); width:0%; transition:width 0.1s linear;"></div>
+      </div>
+      <div id="td-status" style="font-size:10px; letter-spacing:0.1em; color:#7fb8d4; margin-bottom:14px; min-height:16px;">Инициализация канала связи...</div>
+
+      <div style="height:1px; background:rgba(79,195,247,0.08); margin-bottom:14px;"></div>
+      <div style="display:flex; justify-content:flex-end;">
+        <div id="td-ok-btn" onclick="hideTransferDialog(true)" style="display:none; background:transparent; border:1px solid rgba(79,195,247,0.2); color:#7fb8d4; font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:0.14em; padding:6px 16px; clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px)); cursor:pointer;">[ OK ]</div>
+      </div>
+    </div>
+  </div>
 </div>
-
 </body>
 </html>

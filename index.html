@@ -226,21 +226,27 @@ main.visible { opacity: 1; }
   position: absolute; border-radius: 50%; border: 1px solid;
 }
 
-.r1 { inset:0; border-color:rgba(79,195,247,0.35); animation:spinCW 18s linear infinite; }
-.r2 { inset:14px; border-color:rgba(200,168,75,0.25); border-style:dashed; animation:spinCCW 12s linear infinite; }
-.r3 { inset:28px; border-color:rgba(79,195,247,0.2); animation:spinCW 8s linear infinite; }
+/* r1 — внешнее, синее, с двумя полосками сверху/снизу */
+.r1 { inset:0; border-color:rgba(79,195,247,0.35); animation:spinCW 20s linear infinite; }
+.r1::before { content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%); width:3px; height:10px; background:var(--blue); box-shadow:0 0 10px var(--blue); }
+.r1::after  { content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); width:3px; height:10px; background:rgba(79,195,247,0.3); }
+
+/* r2 — пунктир, золотое, с полоской справа */
+.r2 { inset:14px; border-color:rgba(200,168,75,0.28); border-style:dashed; animation:spinCCW 13s linear infinite; }
+.r2::before { content:''; position:absolute; right:-1px; top:50%; transform:translateY(-50%); width:8px; height:2px; background:var(--gold); box-shadow:0 0 7px var(--gold); }
+
+/* r3 — синее, с полоской слева */
+.r3 { inset:28px; border-color:rgba(79,195,247,0.15); animation:spinCW 8s linear infinite; }
+.r3::before { content:''; position:absolute; left:-1px; top:50%; transform:translateY(-50%); width:8px; height:2px; background:rgba(79,195,247,0.4); }
+
+/* r4 — точечный, золотое, медленно */
+.r4 { inset:42px; border-color:rgba(200,168,75,0.1); border-style:dotted; animation:spinCCW 30s linear infinite; }
 
 @keyframes spinCW  { to { transform:rotate(360deg); } }
 @keyframes spinCCW { to { transform:rotate(-360deg); } }
 
-.r1::before {
-  content:''; position:absolute; top:-1px; left:50%;
-  transform:translateX(-50%); width:2px; height:8px;
-  background:var(--blue); box-shadow:0 0 6px var(--blue);
-}
-
 .reactor-core {
-  position:absolute; inset:42px; border-radius:50%;
+  position:absolute; inset:54px; border-radius:50%;
   background:radial-gradient(circle,rgba(79,195,247,0.18) 0%,rgba(79,195,247,0.04) 60%,transparent 100%);
   border:1px solid rgba(79,195,247,0.4);
   display:flex; align-items:center; justify-content:center;
@@ -253,11 +259,14 @@ main.visible { opacity: 1; }
   border:1px solid var(--blue);
   box-shadow:0 0 20px rgba(79,195,247,0.5),0 0 60px rgba(79,195,247,0.15),inset 0 0 12px rgba(79,195,247,0.2);
   animation:glow 3s ease-in-out infinite;
+  display:flex; align-items:center; justify-content:center;
 }
+
+.reactor-inner svg { opacity:0.8; }
 
 @keyframes glow {
   0%,100% { box-shadow:0 0 20px rgba(79,195,247,0.5),0 0 60px rgba(79,195,247,0.15),inset 0 0 12px rgba(79,195,247,0.2); }
-  50%      { box-shadow:0 0 30px rgba(79,195,247,0.8),0 0 80px rgba(79,195,247,0.25),inset 0 0 16px rgba(79,195,247,0.3); }
+  50%      { box-shadow:0 0 34px rgba(79,195,247,0.9),0 0 90px rgba(79,195,247,0.3),inset 0 0 18px rgba(79,195,247,0.35); }
 }
 
 .hero-text { animation:fadeSlide 0.7s ease 0.4s both; }
@@ -999,8 +1008,15 @@ body.mode-overdrive .mode-btn.active-overdrive { border-color: var(--blue); colo
         <div class="reactor-ring r1"></div>
         <div class="reactor-ring r2"></div>
         <div class="reactor-ring r3"></div>
+        <div class="reactor-ring r4"></div>
         <div class="reactor-core">
-          <div class="reactor-inner"></div>
+          <div class="reactor-inner">
+            <svg width="26" height="26" viewBox="0 0 40 40" fill="none">
+              <polygon points="20,3 37,13 37,27 20,37 3,27 3,13" stroke="#4fc3f7" stroke-width="1" fill="rgba(79,195,247,0.08)"/>
+              <polygon points="20,10 30,16 30,24 20,30 10,24 10,16" stroke="#4fc3f7" stroke-width="0.8" fill="rgba(79,195,247,0.12)"/>
+              <circle cx="20" cy="20" r="5" fill="#4fc3f7" opacity="0.9"/>
+            </svg>
+          </div>
         </div>
       </div>
       </div>

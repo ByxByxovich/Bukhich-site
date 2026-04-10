@@ -1610,6 +1610,7 @@ const COMMANDS = {
       ['neofetch',    'системная сводка в стиле neofetch'],
       ['matrix',      'ты знаешь что делать'],
       ['arni',        '???'],
+      ['resistance',  '[СЕКРЕТНО]'],
       ['clear',       'очистить терминал'],
       ['exit',        'закрыть терминал'],
     ];
@@ -1951,6 +1952,104 @@ printLine('');
     await delay(400);
     window.open('https://discord.com/invite/7C8E59f7vy', '_blank');
     printLine('');
+  },
+
+  async resistance() {
+    printLine('');
+    printLine('  <span style="color:#ff2244">█▀█ █▀▀ █▀▀ █   █▀▀ █▀▀ █▀ █▀▀</span>', '');
+    printLine('  <span style="color:#ff2244">█▀█ █▄▄ █▄▄ █▄▄ ██▄ ▄▄█ ▄█ ██▄</span>', '');
+    printLine('');
+    await delay(300);
+    printLine('  <span style="color:rgba(255,34,68,0.6)">КЛАССИФИЦИРОВАНО · ДОСТУП ОГРАНИЧЕН · RKN WATCHLIST</span>', '');
+    await delay(500);
+    printLine('  Запрос идентифицирован...', 'dim');
+    await delay(400);
+    printLine('  <span class="t-ok">[OK]</span> Оператор авторизован. Clearance: МАКСИМАЛЬНЫЙ');
+    await delay(300);
+    printLine('  Обход фаервола РКН...', 'warn');
+    await delay(200);
+    printLine('  <span style="color:rgba(79,195,247,0.5)">██████████████████████████████</span> 100%', '');
+    await delay(400);
+    printLine('  <span class="t-ok">[OK]</span> Туннель установлен. Загружаю архив...');
+    await delay(600);
+
+    // Glitch transition effect
+    const glitchOverlay = document.createElement('div');
+    glitchOverlay.id = 'resistance-glitch';
+    glitchOverlay.style.cssText = `
+      position: fixed; inset: 0; z-index: 9000;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    `;
+    document.body.appendChild(glitchOverlay);
+
+    // Glitch bars
+    const glitchBars = document.createElement('div');
+    glitchBars.style.cssText = 'position:fixed;inset:0;z-index:9001;pointer-events:none;';
+    document.body.appendChild(glitchBars);
+
+    // Animate glitch bars
+    let barInterval = setInterval(() => {
+      glitchBars.innerHTML = '';
+      for (let i = 0; i < 8; i++) {
+        const bar = document.createElement('div');
+        const h = Math.random() * 60 + 10;
+        const top = Math.random() * 100;
+        const offset = (Math.random() - 0.5) * 40;
+        bar.style.cssText = `
+          position:absolute;
+          top:${top}%;
+          left:0; right:0;
+          height:${h}px;
+          background: ${Math.random() > 0.5 ? 'rgba(255,34,68,0.15)' : 'rgba(79,195,247,0.12)'};
+          transform: translateX(${offset}px);
+          mix-blend-mode: screen;
+        `;
+        glitchBars.appendChild(bar);
+      }
+    }, 80);
+
+    // Fade to black
+    await delay(200);
+    glitchOverlay.style.opacity = '1';
+    await delay(500);
+    clearInterval(barInterval);
+    glitchBars.remove();
+
+    // Flash of red text on black screen
+    const flashMsg = document.createElement('div');
+    flashMsg.style.cssText = `
+      position:fixed; inset:0; z-index:9002;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-family:'Orbitron',monospace; color:#ff2244;
+      text-shadow: 0 0 20px rgba(255,34,68,0.8);
+      font-size: 14px; letter-spacing: 6px;
+    `;
+    flashMsg.innerHTML = `
+      <div style="font-size:32px;font-weight:900;margin-bottom:12px;letter-spacing:8px;">DIGITAL RESISTANCE</div>
+      <div style="color:rgba(255,34,68,0.5);font-size:9px;letter-spacing:4px;">ЗАГРУЗКА АРХИВА...</div>
+    `;
+    document.body.appendChild(flashMsg);
+    await delay(800);
+    flashMsg.remove();
+
+    // Open the page
+    printLine('  <span class="t-ok">[OK]</span> Архив загружен. Открываю...');
+    await delay(200);
+
+    // Fade back and redirect
+    glitchOverlay.style.transition = 'opacity 0.4s ease';
+    glitchOverlay.style.opacity = '0';
+    setTimeout(() => glitchOverlay.remove(), 500);
+
+    printLine('');
+    printLine('  <span style="color:#ff2244">// Свобода — это архитектура. — Durov</span>', '');
+    printLine('');
+
+    await delay(600);
+    window.open('resistance.html', '_blank');
   },
 
   clear() {
